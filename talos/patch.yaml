@@ -1,0 +1,8 @@
+cluster:
+  allowSchedulingOnControlPlanes: true
+  network:
+    cni:
+      name: none
+    dnsDomain: cluster.home
+  proxy:
+    disabled: true
