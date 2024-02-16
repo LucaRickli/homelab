@@ -1,0 +1,17 @@
+.env
+.swp
+
+*.log
+*.crt
+*.key
+
+*.tmp
+tmp.*
+*-tmp.*
+
+config.yaml
+*-config.yaml
+
+# Testing / not production ready
+
+/sidero-metal
