@@ -1,5 +1,15 @@
 # Cilium
 
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example
+spec:
+  ingressClassName: cilium # let cilium handle ingress
+  ...
+```
+
 ## Configuration
 
 <!-- `values.yaml` contains [helm configuration values](). -->
@@ -18,17 +28,17 @@ export CLUSTER_ENDPOINT=<endpoint>
 
 - `ipPool.yaml`
 
-  Contains the ip range used to assing external ip's to ingress / loadbalancer services.
+Contains the ip range used to assing external ip's to ingress / loadbalancer services.
 
 - `bgpPeeringPolicy.yaml`
 
-  Contains border gateway protocol peering configuration.
+Contains border gateway protocol peering configuration.
 
 - `l2AnnouncementPolicy.yaml` (Only used if BGP is not.)
 
-  Contains configuration for l2 announcements (ARP). Default interface regex `^enxd83addb6[0-9,a-f]{4}$`
+Contains configuration for l2 announcements (ARP). Default interface regex `^enxd83addb6[0-9,a-f]{4}$`
 
-  > To get the interfaces of a talos node run `talosctl get addresses --talosconfig <talosconfig path> -n <node>`.
+> To get the interfaces of a talos node run `talosctl get addresses --talosconfig <talosconfig path> -n <node>`.
 
 ## Installation
 
@@ -45,13 +55,17 @@ cilium install --version 1.14.6 \
   --helm-set=securityContext.capabilities.cleanCiliumState="{NET_ADMIN,SYS_ADMIN,SYS_RESOURCE}" \
   --helm-set=cgroup.autoMount.enabled=false \
   --helm-set=cgroup.hostRoot=/sys/fs/cgroup \
-  --helm-set=bgpControlPlane.enabled=true \
   --helm-set=ingressController.enabled=true \
+  --helm-set=ingressController.loadbalancerMode=dedicated \
+  --helm-set=bgpControlPlane.enabled=true \
   --helm-set=hubble.enabled=true \
   --helm-set=hubble.ui.enabled=true \
   --helm-set=hubble.relay.enabled=true \
   --helm-set=hubble.peerService.clusterDomain=cluster.home \
-  --helm-set=ingressController.loadbalancerMode=dedicated \
+  --helm-set=hubble.metrics.enableOpenMetrics=true \
+  --helm-set=hubble.metrics.enabled="{dns,drop,tcp,flow,port-distribution,icmp,httpV2:exemplars=true;labelsContext=source_ip\,source_namespace\,source_workload\,destination_ip\,destination_namespace\,destination_workload\,traffic_direction}" \
+  --helm-set=prometheus.enabled=true \
+  --helm-set=operator.prometheus.enabled=true \
   --helm-set=k8sServiceHost=$CLUSTER_ENDPOINT \
   --helm-set=k8sServicePort=6443
 ```

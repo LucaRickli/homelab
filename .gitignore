@@ -1,5 +1,6 @@
 .env
 .swp
+.DS_Store
 
 *.log
 *.crt
