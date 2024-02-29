@@ -106,6 +106,8 @@ Apply bgp peering policy.
 kubectl apply -f bgpPeeringPolicy.yaml
 ```
 
+Once everythings configured you can inspect the BGP routes on your router using `show ip bgp`.
+
 #### Layer 2 announcments
 
 If your network does not support BGP cilium can resolve your services using ARP.
@@ -131,4 +133,14 @@ If you want to make the UI available for everyone you could expose it with this 
 ```sh
 kubectl apply -f httpIngress.yaml
 kubectl apply -f secureIngress.yaml # requires cert-manager
+```
+
+## Debugging
+
+### BPG
+
+Show BGP routes on the edgerouter.
+
+```sh
+show ip bgp
 ```
