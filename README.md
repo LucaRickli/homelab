@@ -4,11 +4,11 @@ Local Kubernetes cluster.
 
 ## Requirements
 
-- [Cilium cli]()
-- [CMctl](https://cert-manager.io/docs/reference/cmctl/#installation)
-- [Helm]()
-- [Kubectl]()
-- [Talosctl]()
+- [Cilium cli](https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/#install-the-cilium-cli)
+- [CMctl](https://cert-manager.io/docs/reference/cmctl/#installation) (optional)
+- [Helm](https://helm.sh/docs/helm/helm_install/)
+- [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [Talosctl](https://www.talos.dev/v1.6/introduction/getting-started/#talosctl)
 <!-- - []() -->
 
 ## Setup
@@ -23,13 +23,13 @@ Local Kubernetes cluster.
 
 ## Stack
 
-| Name             | Use                                                     |
-| ---------------- | ------------------------------------------------------- |
-| [Cert manager]() | Certificates for ingress resources                      |
-| [Cilium]()       | Networking, loadbalancer & security                     |
-| [ExDNS]()        | Resolves ingress hostnames to corresponding external ip |
-| [Netdata]()      | Monitoring & alerting                                   |
-| [Talos linux]()  | Operating system designed to run kubernetes             |
+| Name                                                                                  | Use                                                     | Default endpoint(s)                                    |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
+| [Cert manager](https://github.com/LucaRickli/homelab/tree/main/internal/cert-manager) | Certificates for ingress resources                      | kube-apiserver                                         |
+| [Cilium](https://github.com/LucaRickli/homelab/tree/main/internal/cilium)             | Networking, loadbalancer & security                     | [hubble.services.home](https://hubble.services.home)   |
+| [ExDNS](https://github.com/LucaRickli/homelab/tree/main/internal/exDNS)               | Resolves ingress hostnames to corresponding external ip | 172.16.1.1/UDP                                         |
+| [Netdata](https://github.com/LucaRickli/homelab/tree/main/internal/netdata)           | Monitoring & alerting                                   | [netdata.services.home](https://netdata.services.home) |
+| [Talos linux](https://github.com/LucaRickli/homelab/tree/main/talos)                  | Operating system designed to run kubernetes             | see ip ranges                                          |
 
 <!-- | []()             |                                                         | -->
 
