@@ -1,0 +1,26 @@
+operatorNamespace: rook-ceph
+
+cephClusterSpec:
+  dashboard:
+    enabled: true
+    port: 7000
+    ssl: false
+
+mgr:
+  modules:
+    - name: pg_autoscaler
+      enabled: true
+    - name: rook
+      enabled: true
+
+ingress:
+  dashboard:
+    ingressClassName: cilium
+    annotations:
+      cert-manager.io/cluster-issuer: cloudflare-letsencrypt
+    host:
+      name: ceph.rickli.cloud
+    tls:
+      - hosts:
+          - ceph.rickli.cloud
+        secretName: ceph-ingress-cert

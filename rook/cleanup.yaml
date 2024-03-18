@@ -1,0 +1,30 @@
+# talos-24m-sjk
+# talos-fht-z16
+# talos-jze-zp8
+# talos-pue-g5d
+# talos-sem-nme
+# talos-v68-3rx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rook-ceph-cleanup
+  namespace: rook-ceph
+spec:
+  nodeName: talos-24m-sjk
+  containers:
+    - name: rook-ceph-cleanup
+      image: busybox:1.28
+      command: ["sh", "-c", "rm -vfr /var/lib/rook/*"]
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      volumeMounts:
+        - name: rook-lib
+          mountPath: /var/lib/rook
+  volumes:
+    - name: rook-lib
+      hostPath:
+        path: /var/lib/rook
+        type: Directory
