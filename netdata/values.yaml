@@ -1,0 +1,23 @@
+# parent:
+#   database:
+#     storageclass: nfs-client
+#   alarms:
+#     storageclass: nfs-client
+
+# k8sState:
+#   persistence:
+#     storageclass: nfs-client
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-letsencrypt
+    kubernetes.io/ingress.class: cilium
+  spec:
+    ingressClassName: cilium
+    tls:
+      - secretName: netdata-ingress-cert
+        hosts:
+          - netdata.rickli.cloud
+  hosts:
+    - netdata.rickli.cloud
