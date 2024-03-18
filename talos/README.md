@@ -6,9 +6,9 @@ Create a multi node kubernetes cluster using [Talos os](https://www.talos.dev/).
 
 ### Environment
 
-- #### Kubernetes cluster endpoint
+- #### External kube-apiserver endpoint
 
-If you desire multiple controlplane nodes the cluster endpoint needs to be a dns record pointing to your nodes.
+If you desire multiple controlplane nodes the cluster endpoint needs to be a virtual ip or a dns record pointing to your nodes. Or you could use [KubePrism](https://www.talos.dev/v1.6/kubernetes-guides/configuration/kubeprism/) built into Talos to create a in-cluster highly-available controlplane endpoint
 
 ```sh
 export CLUSTER_ENDPOINT=<endpoint>
