@@ -1,0 +1,131 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: excoredns
+  namespace: kube-system
+data:
+  Corefile: |-
+    .:53 {
+        errors
+        log
+        ready
+        hosts {
+          192.168.10.100  omni.rickli.cloud
+          fallthrough
+        }
+        k8s_gateway rickli.cloud
+        forward . /etc/resolv.conf
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-dns
+  namespace: kube-system
+  annotations:
+    "io.cilium/lb-ipam-ips": "172.16.1.1"
+spec:
+  type: LoadBalancer
+  selector:
+    k8s-app: excoredns
+  ports:
+    - name: udp-53
+      port: 53
+      targetPort: 53
+      protocol: UDP
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: excoredns
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: excoredns
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - namespaces
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - "*"
+    verbs:
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: excoredns
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: excoredns
+subjects:
+  - kind: ServiceAccount
+    name: excoredns
+    namespace: kube-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: excoredns
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: "excoredns"
+  template:
+    metadata:
+      labels:
+        k8s-app: "excoredns"
+    spec:
+      serviceAccountName: excoredns
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: "coredns"
+          image: "quay.io/oriedge/k8s_gateway"
+          imagePullPolicy: IfNotPresent
+          args: ["-conf", "/etc/coredns/Corefile"]
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/coredns
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+            - { containerPort: 53, protocol: UDP, name: udp-53 }
+            - { containerPort: 53, protocol: TCP, name: tcp-53 }
+      volumes:
+        - name: config-volume
+          configMap:
+            name: excoredns
+            items:
+              - key: Corefile
+                path: Corefile
