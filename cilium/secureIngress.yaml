@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare-letsencrypt
+spec:
+  ingressClassName: cilium
+  rules:
+    - host: hubble.rickli.cloud
+      http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: hubble-ui
+                port:
+                  number: 80
+  tls:
+    - secretName: hubble-ingress-cert
+      hosts:
+        - hubble.rickli.cloud
