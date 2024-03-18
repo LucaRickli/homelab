@@ -1,10 +1,14 @@
 .env
 .swp
 .DS_Store
+.vscode/settings.json
 
-*.log
 *.crt
 *.key
+*.pem
+
+*.log
+*.uuid
 
 *.tmp
 tmp.*
@@ -12,6 +16,9 @@ tmp.*
 
 config.yaml
 *-config.yaml
+
+secret.yaml
+*-secret.yaml
 
 # Testing / not production ready
 

@@ -1,5 +1,0 @@
-installCRDs: true
-ingressShim:
-  defaultIssuerName: external
-  defaultIssuerKind: ClusterIssuer
-  defaultIssuerGroup: cert-manager.io
