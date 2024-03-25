@@ -51,6 +51,8 @@ On-prem Kubernetes cluster.
 
   > Alternatively you could just use [Talos linux](https://github.com/LucaRickli/homelab/tree/main/talos) and [talosctl](https://www.talos.dev/v1.6/introduction/getting-started/#talosctl) to manage your nodes.
 
+  Dashboard: [https://ceph.rickli.cloud](https://ceph.rickli.cloud)
+
   - Custom pre configured Talos linux images.
   - Cluster lifecycle management.
   - Kubernetes API access control (OAuth).
@@ -59,6 +61,8 @@ On-prem Kubernetes cluster.
 
 - #### [Cilium](https://github.com/LucaRickli/homelab/tree/main/cilium)
 
+  Dashboard: [https://hubble.rickli.cloud](https://hubble.rickli.cloud)
+
   - Replaces kube-proxy.
   - Acts as LoadBalancer & assigns external ip's.
   - Networking policies.
@@ -66,9 +70,9 @@ On-prem Kubernetes cluster.
 
 - #### [External DNS](https://github.com/LucaRickli/homelab/tree/main/exDNS)
 
-  > Endpoint: `172.16.1.1`
+  Endpoint: [udp://172.16.1.1](#)
 
-  - Resolves ingress hostnames to corresponding external ip.
+  - Resolves ingress hostnames to corresponding external virtual ip.
 
 ### Certificates
 
@@ -80,24 +84,19 @@ On-prem Kubernetes cluster.
 
 - #### [Rook ceph](https://github.com/LucaRickli/homelab/tree/main/rook)
 
+  Dashboard: [https://ceph.rickli.cloud](https://ceph.rickli.cloud)
+
   - Provides storage for the kubernetes cluster.
 
 ### Monitoring
 
 - #### [Netdata](https://github.com/LucaRickli/homelab/tree/main/netdata)
 
+  Dashboard: [https://netdata.rickli.cloud](https://netdata.rickli.cloud)
+
   - Monitors each node and provides a dashboard without a big configuration mess.
 
-## Services
-
-| Name                                                                     | Use                          | Endpoint(s)                                          | Platform   |
-| ------------------------------------------------------------------------ | ---------------------------- | ---------------------------------------------------- | ---------- |
-| [Ceph dashboard](https://github.com/LucaRickli/homelab/tree/main/cilium) | Storage administration       | [ceph.rickli.cloud](https://ceph.rickli.cloud)       | Kubernetes |
-| [Cilium hubble](https://github.com/LucaRickli/homelab/tree/main/cilium)  | Service map                  | [hubble.rickli.cloud](https://hubble.rickli.cloud)   | Kubernetes |
-| [Netdata](https://github.com/LucaRickli/homelab/tree/main/netdata)       | Monitoring & alerting        | [netdata.rickli.cloud](https://netdata.rickli.cloud) | Kubernetes |
-| [Sidero omni](https://github.com/LucaRickli/homelab/tree/main/)          | Cluster lifecycle management | [omni.rickli.cloud](https://omni.rickli.cloud)       | Docker     |
-
-<!-- | [](https://github.com/LucaRickli/homelab/tree/main/)                    |                       | [<url>](https://<url>)                               | Kubernetes | -->
+<!-- ### Services -->
 
 ## IP ranges
 
@@ -105,6 +104,6 @@ On-prem Kubernetes cluster.
 
 IP range: `192.168.10.0/24`
 
-### kubernetes services (virtual)
+### kubernetes services
 
-IP range: `172.16.0.0/16`
+IP range: `172.16.0.0/16` (virtual)
