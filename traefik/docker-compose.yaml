@@ -1,0 +1,61 @@
+version: "3.9"
+
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/24
+          gateway: 172.19.0.1
+
+services:
+  traefik:
+    image: traefik:${TRAEFIK_VERSION:-latest}
+    container_name: traefik
+    pull_policy: always
+    restart: always
+    # environment:
+    #   CLOUDFLARE_EMAIL: ${CLOUDFLARE_EMAIL:?required}
+    #   CLOUDFLARE_API_KEY: ${CLOUDFLARE_API_KEY:?required}
+    command:
+      - --ping=true
+      - --log.level=INFO
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy
+      - --providers.file.filename=/root/.config/dynamic.yaml
+      - --providers.file.watch=true
+      - --entrypoints.websecure.address=0.0.0.0:443
+      - --entrypoints.web.address=0.0.0.0:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      # - --certificatesresolvers.le.acme.dnsChallenge.provider=cloudflare
+      - --certificatesresolvers.le.acme.tlschallenge=true
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.email=${LETSENCRYPT_EMAIL}
+      - --serversTransport.insecureSkipVerify=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/dynamic.yaml:/root/.config/dynamic.yaml:ro # $HOME = /root
+      # - ${PWD}/certs:/etc/certs # Cloudflare origin certs
+      - ${PWD}/letsencrypt:/letsencrypt:rw
+    ports:
+      - 0.0.0.0:80:80/tcp
+      - 0.0.0.0:443:443/tcp
+      # - 0.0.0.0:8080:8080/tcp # This makes the dashboard open for anyone!
+    expose:
+      - 80 # http
+      - 443 # https
+      - 8080 # dashboard (internal)
+    networks:
+      proxy:
+        ipv4_address: 172.19.0.100
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      start_period: 30s

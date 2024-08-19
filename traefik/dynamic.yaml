@@ -1,0 +1,15 @@
+# This is only required when using a cloudflare origin certificate
+# tls:
+#   certificates:
+#     - certFile: /etc/certs/cloudflare-origin.crt
+#       keyFile: /etc/certs/cloudflare-origin.key
+# http:
+#   serversTransports:
+#     skipVerify:
+#       insecureSkipVerify: true
+
+# Do not serve the default certificate
+tls:
+  options:
+    default:
+      sniStrict: true

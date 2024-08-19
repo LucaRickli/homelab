@@ -6,7 +6,7 @@ RUN apk add curl && \
     chmod +x /omni-linux-arm64 && \
     chmod +x /omnictl-linux-arm64
 
-FROM ghcr.io/siderolabs/omni:v0.31.1
+FROM ghcr.io/siderolabs/omni:latest
 
 COPY --from=source /omni-linux-arm64 /omni
 COPY --from=source /omnictl-linux-arm64 /omnictl

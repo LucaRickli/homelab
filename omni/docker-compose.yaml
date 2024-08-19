@@ -1,0 +1,77 @@
+version: "3.9" # legacy
+name: omni
+
+networks:
+  proxy:
+    name: proxy
+    external: true
+
+services:
+  omni:
+    image: ghcr.io/siderolabs/omni:${OMNI_VERSION:-latest}
+    container_name: omni
+    pull_policy: always
+    restart: always
+    # network_mode: host
+    cap_add:
+      - NET_ADMIN
+    command: >
+      --account-id=${OMNI_UUID:?required} 
+      --name=${OMNI_NAME:-omni}
+      --private-key-source=file:///omni.asc
+      --event-sink-port=8091
+      --bind-addr=0.0.0.0:8080
+      --machine-api-bind-addr=0.0.0.0:8090
+      --k8s-proxy-bind-addr=0.0.0.0:8100
+      --advertised-api-url=https://${OMNI_DOMAIN:?required}:443
+      --siderolink-api-advertised-url=https://api.${OMNI_DOMAIN}:443
+      --advertised-kubernetes-proxy-url=https://kube.${OMNI_DOMAIN}:443
+      --siderolink-wireguard-advertised-addr=${OMNI_IP:?required}:50180
+      --siderolink-use-grpc-tunnel=true
+      --initial-users=${OMNI_INITIAL_USER:?required}
+      --auth-auth0-enabled=${OMNI_AUTH0_ENABLED:-false} 
+      --auth-auth0-domain=${OMNI_AUTH0_DOMAIN} 
+      --auth-auth0-client-id=${OMNI_AUTH0_CLIENT}
+    # --cert=/tls.crt
+    # --key=/tls.key
+    # --machine-api-cert=/tls.crt
+    # --machine-api-key=/tls.key
+    volumes:
+      - $PWD/etcd:/_out/etcd:rw
+      - $PWD/omni.asc:/omni.asc:ro
+      # - $PWD/tls.crt:/tls.crt:ro
+      # - $PWD/tls.key:/tls.key:ro
+      - /dev/net/tun:/dev/net/tun:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 50180:50180
+    networks:
+      - proxy
+    labels:
+      traefik.enable: true
+      # Ui
+      traefik.http.routers.omni.rule: Host(`${OMNI_DOMAIN}`)
+      traefik.http.routers.omni.entrypoints: websecure
+      traefik.http.routers.omni.tls.certresolver: le
+      traefik.http.routers.omni.service: omni
+      traefik.http.services.omni.loadbalancer.server.port: 8080
+      # GRPC
+      traefik.http.routers.omni-grpc.rule: Host(`${OMNI_DOMAIN}`)
+      traefik.http.routers.omni-grpc.entrypoints: websecure
+      traefik.http.routers.omni-grpc.tls.certresolver: le
+      traefik.http.routers.omni-grpc.service: omni-grpc
+      traefik.http.services.omni-grpc.loadbalancer.server.port: 8080
+      traefik.http.services.omni-grpc.loadbalancer.server.scheme: h2c
+      # API
+      traefik.http.routers.omni-api.rule: Host(`api.${OMNI_DOMAIN}`)
+      traefik.http.routers.omni-api.entrypoints: websecure
+      traefik.http.routers.omni-api.tls.certresolver: le
+      traefik.http.routers.omni-api.service: omni-api
+      traefik.http.services.omni-api.loadbalancer.server.port: 8090
+      traefik.http.services.omni-api.loadbalancer.server.scheme: h2c
+      # Kube proxy
+      traefik.http.routers.omni-kubeproxy.rule: Host(`kube.${OMNI_DOMAIN}`)
+      traefik.http.routers.omni-kubeproxy.entrypoints: websecure
+      traefik.http.routers.omni-kubeproxy.tls.certresolver: le
+      traefik.http.routers.omni-kubeproxy.service: omni-kubeproxy
+      traefik.http.services.omni-kubeproxy.loadbalancer.server.port: 8100

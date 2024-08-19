@@ -1,6 +1,6 @@
 # Talos
 
-Create a multi node kubernetes cluster using [Talos os](https://www.talos.dev/).
+Create a kubernetes cluster using [Talos os](https://www.talos.dev/).
 
 ## Configuration
 
@@ -47,7 +47,7 @@ Replace `context.my-cluster.endpoints` inside `talosconfig` with all controlplan
 
 Use the `-n` flag to target specific node.
 
-> If you have multiple nodes and the install disks dont match you have to edit `machine.install.disk` in the yaml configuration for each node before applying.
+> If you have multiple nodes and the install disks do not match on all nodes you have to edit `machine.install.disk` in the yaml configuration for each node before applying.
 
 #### Controlplane
 
